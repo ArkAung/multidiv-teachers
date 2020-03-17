@@ -1,0 +1,29 @@
+from torchvision.models import alexnet
+from torchvision.models import vgg11
+from torchvision.models import resnet18
+from torchvision.models import shufflenet_v2_x0_5
+from torchvision.models import inception_v3
+from train import train
+
+class NetworkBuilder:
+    def __init__(self, num_classes, arch, optimizer, loss_fn):
+        self.arch_dict = {'alexnet': alexnet,
+                            'vgg': vgg11,
+                            'resnet': resnet18,
+                            'shufflenet': shufflenet_v2_x0_5,
+                            'inception': inception_v3}
+        self.num_classes = num_classes
+        self.arch = arch
+        self.model = self.build_network() 
+        self.optimizer = optimizer
+        self.loss_fn = loss_fn
+    
+    def build_network(self):
+        assert arch in ['alexnet', 'vgg', 'resnet', 'shufflenet', 'inception']
+        network = self.arch_dict[self.arch](num_classes=self.num_classes)
+        return network
+
+    def train_network(self):
+
+    
+
