@@ -22,8 +22,9 @@ class NetworkBuilder:
         self.loss_fn = loss_fn
     
     def build_network(self):
-        assert arch in ARCH_NAMES
+        assert self.arch in ARCH_NAMES
         network = self.arch_dict[self.arch](num_classes=self.num_classes)
+        network = network.to(self.device)
         return network
 
     def train_network(self, train_epochs, device, dataloader, lr):
