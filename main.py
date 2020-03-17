@@ -25,4 +25,3 @@ if __name__ == "__main__":
     network = NetworkBuilder(num_classes=num_classes, arch='vgg', optimizer=optimizer, loss_fn=loss_fn)
     network.train_network(train_epochs=train_epochs, device=device, 
                             dataloader=train_dataloader, lr=learning_rate)
-    

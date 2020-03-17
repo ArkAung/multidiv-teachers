@@ -27,3 +27,6 @@ class NetworkBuilder:
         optimizer = self.optimizer(self.model.parameters(), lr=lr)
         train(epochs=train_epochs, device=device, dataloader=dataloader,
                 net=self.model, optimizer=optimizer, criterion=self.loss_fn)
+
+    def save_network_params(self, save_path):
+        torch.save(self.model.state_dict(), f=save_path)
