@@ -23,7 +23,7 @@ class NetworkBuilder:
         network = self.arch_dict[self.arch](num_classes=self.num_classes)
         return network
 
-    def train_network(self):
-
-    
-
+    def train_network(self, train_epochs, device, dataloader, lr):
+        optimizer = self.optimizer(self.model.parameters(), lr=lr)
+        train(epochs=train_epochs, device=device, dataloader=dataloader,
+                net=self.model, optimizer=optimizer, criterion=self.loss_fn)
