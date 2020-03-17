@@ -31,3 +31,4 @@ if __name__ == "__main__":
         network.train_network(train_epochs=train_epochs, device=device, 
                                 dataloader=train_dataloader, lr=learning_rate)
         network.save_network_params(save_path='models/cifar_{}.pth'.format(ARCH))
+        network.test_network()

@@ -4,6 +4,7 @@ from torchvision.models import resnet18
 from torchvision.models import shufflenet_v2_x0_5
 from torchvision.models import inception_v3
 from train import train
+from test import test
 
 ARCH_NAMES = ['alexnet', 'vgg', 'resnet', 'shufflenet', 'inception']
 
@@ -29,6 +30,9 @@ class NetworkBuilder:
         optimizer = self.optimizer(self.model.parameters(), lr=lr)
         train(epochs=train_epochs, device=device, dataloader=dataloader,
                 net=self.model, optimizer=optimizer, criterion=self.loss_fn)
+
+    def test_network(self, device, dataloader):
+        test(device=device, dataloader=dataloader)
 
     def save_network_params(self, save_path):
         torch.save(self.model.state_dict(), f=save_path)
