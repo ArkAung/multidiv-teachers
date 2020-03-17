@@ -2,6 +2,7 @@
     Modular train function which takes in
 """
 from tqdm import tqdm
+import torch
 
 def train(epochs, device, dataloader, net, optimizer, criterion):
     total_batches = len(dataloader.dataset.data)//dataloader.batch_size
@@ -24,7 +25,7 @@ def train(epochs, device, dataloader, net, optimizer, criterion):
                 num_datapoints += len(labels)
                 _, predicted = torch.max(outputs.data, 1)
                 correct += (predicted == labels).sum().item()
+                pbar.update(1)
 
-            mean_loss = running_loss/num_datapoints
-            pbar.update(1)
+        mean_loss = running_loss/num_datapoints    
         print("Epoch: {} -- Average Loss: {} -- Acc: {}%".format(e, mean_loss, 100*correct/num_datapoints))

@@ -1,4 +1,5 @@
 from tqdm import tqdm
+import torch
 
 def test(device, dataloader, net, model_path=None):
     total_datapoints = len(dataloader.dataset.data)

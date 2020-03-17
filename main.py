@@ -18,7 +18,8 @@ if __name__ == "__main__":
     phase = 'train'
     ## End of Global args ##
     
-    train_dataset = CIFAR10(root='datasets', train=True, transform=get_transforms(), download=True)
+    train_dataset = CIFAR10(root='datasets', train=True,
+                             transform=get_transforms(resize_shape=64), download=True)
     train_dataloader = get_dataloader(dataset=train_dataset,
                                         bs=train_batch_size, 
                                         num_workers=train_dataloader_num_workers)
@@ -27,6 +28,7 @@ if __name__ == "__main__":
     loss_fn = CrossEntropyLoss()
 
     for ARCH in ARCH_NAMES:
+        print("Training:: {}".format(ARCH))
         network = NetworkBuilder(num_classes=num_classes, arch=ARCH, optimizer=optimizer, loss_fn=loss_fn)
         network.train_network(train_epochs=train_epochs, device=device, 
                                 dataloader=train_dataloader, lr=learning_rate)

@@ -6,7 +6,7 @@ from torchvision.models import inception_v3
 from train import train
 from test import test
 
-ARCH_NAMES = ['alexnet', 'vgg', 'resnet', 'shufflenet', 'inception']
+ARCH_NAMES = ['vgg', 'resnet', 'shufflenet', 'inception']
 
 class NetworkBuilder:
     def __init__(self, num_classes, arch, optimizer, loss_fn):
@@ -24,10 +24,10 @@ class NetworkBuilder:
     def build_network(self):
         assert self.arch in ARCH_NAMES
         network = self.arch_dict[self.arch](num_classes=self.num_classes)
-        network = network.to(self.device)
         return network
 
     def train_network(self, train_epochs, device, dataloader, lr):
+        self.model = self.model.to(device)
         optimizer = self.optimizer(self.model.parameters(), lr=lr)
         train(epochs=train_epochs, device=device, dataloader=dataloader,
                 net=self.model, optimizer=optimizer, criterion=self.loss_fn)
