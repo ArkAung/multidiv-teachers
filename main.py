@@ -2,6 +2,8 @@ from train import train
 from data import get_dataloader, get_transforms
 from torchvision.datasets import CIFAR10
 from network import NetworkBuilder
+from network import ARCH_NAMES
+
 import torch
 import torch.optim as optim
 from torch.nn import CrossEntropyLoss
@@ -13,6 +15,7 @@ if __name__ == "__main__":
     train_epochs = 10
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
     learning_rate = 1e-3
+    phase = 'train'
     ## End of Global args ##
     
     train_dataset = CIFAR10(root='datasets', train=True, transform=get_transforms(), download=True)
@@ -22,6 +25,9 @@ if __name__ == "__main__":
     num_classes = len(train_dataset.classes)
     optimizer = optim.Adam
     loss_fn = CrossEntropyLoss()
-    network = NetworkBuilder(num_classes=num_classes, arch='vgg', optimizer=optimizer, loss_fn=loss_fn)
-    network.train_network(train_epochs=train_epochs, device=device, 
-                            dataloader=train_dataloader, lr=learning_rate)
+
+    for ARCH in ARCH_NAMES:
+        network = NetworkBuilder(num_classes=num_classes, arch=ARCH, optimizer=optimizer, loss_fn=loss_fn)
+        network.train_network(train_epochs=train_epochs, device=device, 
+                                dataloader=train_dataloader, lr=learning_rate)
+        
