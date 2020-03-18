@@ -5,6 +5,8 @@ def test(device, dataloader, net, model_path=None):
     total_datapoints = len(dataloader.dataset.data)
     total_batches = total_datapoints//dataloader.batch_size
     net = net.to(device)
+    if model_path is not None:
+        net.load_state_dict(torch.load(model_path))
     total = 0
     correct = 0
     with torch.no_grad():
@@ -17,4 +19,4 @@ def test(device, dataloader, net, model_path=None):
                 correct += (predicted == labels).sum().item()
                 pbar.update(1)
 
-        print('Accuracy on {} data points: {}%'.format(total_datapoints, 100 * correct/total))
+        print('Test accuracy on {} data points: {}%'.format(total_datapoints, 100 * correct/total))

@@ -1,20 +1,22 @@
-from torchvision.models import alexnet
-from torchvision.models import vgg11
-from torchvision.models import resnet18
-from torchvision.models import shufflenet_v2_x0_5
-from torchvision.models import inception_v3
+import torch
+import torchvision.models as models
 from train import train
 from test import test
 
-ARCH_NAMES = ['vgg', 'resnet', 'shufflenet', 'inception']
+ARCH_NAMES = ['vgg', 'resnet', 'shufflenet', 'squeeze', 'resnext', 'googlenet', 'mnasnet']
 
 class NetworkBuilder:
     def __init__(self, num_classes, arch, optimizer, loss_fn):
-        self.arch_dict = {'alexnet': alexnet,
-                            'vgg': vgg11,
-                            'resnet': resnet18,
-                            'shufflenet': shufflenet_v2_x0_5,
-                            'inception': inception_v3}
+        self.arch_dict = {
+                            'vgg': models.vgg11,
+                            'resnet': models.resnet18,
+                            'shufflenet': models.shufflenet_v2_x1_0,
+                            'squeeze': models.squeezenet1_0,
+                            'resnext': models.resnext50_32x4d,
+                            'googlenet': models.googlenet,
+                            'mnasnet': models.mnasnet1_0
+                        }
+
         self.num_classes = num_classes
         self.arch = arch
         self.model = self.build_network() 
@@ -32,8 +34,8 @@ class NetworkBuilder:
         train(epochs=train_epochs, device=device, dataloader=dataloader,
                 net=self.model, optimizer=optimizer, criterion=self.loss_fn)
 
-    def test_network(self, device, dataloader):
-        test(device=device, dataloader=dataloader)
+    def test_network(self, device, dataloader, model_path=None):
+        test(device=device, dataloader=dataloader, net=self.model, model_path=model_path)
 
     def save_network_params(self, save_path):
         torch.save(self.model.state_dict(), f=save_path)
