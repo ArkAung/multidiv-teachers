@@ -3,7 +3,7 @@ import torchvision.models as models
 from train import train
 from test import test
 
-ARCH_NAMES = ['vgg', 'resnet', 'shufflenet', 'squeeze', 'resnext', 'googlenet', 'mnasnet']
+ARCH_NAMES = ['vgg', 'resnet', 'shufflenet', 'squeeze', 'resnext', 'mnasnet']
 
 class NetworkBuilder:
     def __init__(self, num_classes, arch, optimizer, loss_fn):
@@ -13,7 +13,6 @@ class NetworkBuilder:
                             'shufflenet': models.shufflenet_v2_x1_0,
                             'squeeze': models.squeezenet1_0,
                             'resnext': models.resnext50_32x4d,
-                            'googlenet': models.googlenet,
                             'mnasnet': models.mnasnet1_0
                         }
 
@@ -34,8 +33,9 @@ class NetworkBuilder:
         train(epochs=train_epochs, device=device, dataloader=dataloader,
                 net=self.model, optimizer=optimizer, criterion=self.loss_fn)
 
-    def test_network(self, device, dataloader, model_path=None):
-        test(device=device, dataloader=dataloader, net=self.model, model_path=model_path)
+    def test_network(self, device, dataloader, model_path=None, save_softmax_outputs=False, softmax_save_path=None):
+        test(device=device, dataloader=dataloader, net=self.model, model_path=model_path, 
+             save_softmax_outputs=save_softmax_outputs, softmax_save_path=softmax_save_path)
 
     def save_network_params(self, save_path):
         torch.save(self.model.state_dict(), f=save_path)

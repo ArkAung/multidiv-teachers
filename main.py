@@ -1,4 +1,3 @@
-from train import train
 from data import get_dataloader, get_transforms
 from torchvision.datasets import CIFAR10
 from network import NetworkBuilder
@@ -8,6 +7,12 @@ import torch
 import torch.optim as optim
 from torch.nn import CrossEntropyLoss
 import os
+
+def make_folders():
+    if not os.path.isdir('models'):
+        os.makedirs('models')
+    if not os.path.isdir('softmax_outputs'):
+        os.makedirs('softmax_outputs')
 
 if __name__ == "__main__":
     ## Global args will be moved to argparse ##
@@ -20,7 +25,8 @@ if __name__ == "__main__":
     learning_rate = 1e-3
     phase = 'train'
     ## End of Global args ##
-    
+    make_folders()
+
     print("Device: {}".format(torch.cuda.get_device_name()))
 
     train_dataset = CIFAR10(root='datasets', train=True,
@@ -43,6 +49,9 @@ if __name__ == "__main__":
         network = NetworkBuilder(num_classes=num_classes, arch=ARCH, optimizer=optimizer, loss_fn=loss_fn)
         network.train_network(train_epochs=train_epochs, device=device, 
                                 dataloader=train_dataloader, lr=learning_rate)
-        save_name = 'models/cifar_{}.pth'.format(ARCH)
-        network.save_network_params(save_path=save_name.format(ARCH))
-        network.test_network(device=device, dataloader=test_dataloader, model_path=save_name)
+        model_save_path = 'models/cifar_{}.pth'.format(ARCH)
+        network.save_network_params(save_path=model_save_path)
+        softmax_save_path = 'softmax_outputs/outputs_softmax_{}.pt'.format(ARCH)
+        network.test_network(device=device, dataloader=test_dataloader,
+                             model_path=model_save_path, 
+                             save_softmax_outputs=True, softmax_save_path=softmax_save_path)
