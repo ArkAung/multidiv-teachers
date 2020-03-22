@@ -4,10 +4,11 @@
 from tqdm import tqdm
 import torch
 
-def train(epochs, device, dataloader, net, optimizer, criterion):
-    total_batches = len(dataloader.dataset.data)//dataloader.batch_size
-    
-    for e in range(1, epochs+1): # For each epoch
+
+def train(epochs, device, dataloader, net, optimizer, criterion, temperature):
+    total_batches = len(dataloader.dataset.data) // dataloader.batch_size
+
+    for e in range(1, epochs + 1):  # For each epoch
         running_loss = 0
         num_datapoints = 0
         correct = 0
@@ -17,7 +18,7 @@ def train(epochs, device, dataloader, net, optimizer, criterion):
 
                 optimizer.zero_grad()
                 outputs = net(images)
-                loss = criterion(outputs, labels)
+                loss = criterion(outputs / temperature, labels)
                 loss.backward()
                 optimizer.step()
 
@@ -27,5 +28,5 @@ def train(epochs, device, dataloader, net, optimizer, criterion):
                 correct += (predicted == labels).sum().item()
                 pbar.update(1)
 
-        mean_loss = running_loss/num_datapoints    
-        print("Epoch: {} -- Average Loss: {} -- Acc: {}%".format(e, mean_loss, 100*correct/num_datapoints))
+        mean_loss = running_loss / num_datapoints
+        print("Epoch: {} -- Average Loss: {} -- Acc: {}%".format(e, mean_loss, 100 * correct / num_datapoints))

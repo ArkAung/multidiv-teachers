@@ -5,23 +5,36 @@ from test import test
 
 ARCH_NAMES = ['vgg', 'resnet', 'shufflenet', 'squeeze', 'resnext', 'mnasnet']
 
+
 class NetworkBuilder:
-    def __init__(self, num_classes, arch, optimizer, loss_fn):
+    def __init__(self, num_classes, arch, optimizer, loss_fn, temperature):
+        """
+        :param num_classes: number of output classes in the dataset
+        :param arch: architecture of the network in text format. Refer to ARCH_NAMES.
+        :param optimizer: torch.optim optimizer
+        :param loss_fn: torch.nn.<Loss functions>
+        :param temperature: Temperature parameter. If this is specified, temperature layer is added
+                to the penultimate layer of the network.
+        """
         self.arch_dict = {
-                            'vgg': models.vgg11,
-                            'resnet': models.resnet18,
-                            'shufflenet': models.shufflenet_v2_x1_0,
-                            'squeeze': models.squeezenet1_0,
-                            'resnext': models.resnext50_32x4d,
-                            'mnasnet': models.mnasnet1_0
-                        }
+            'vgg': models.vgg11,
+            'resnet': models.resnet18,
+            'shufflenet': models.shufflenet_v2_x1_0,
+            'squeeze': models.squeezenet1_0,
+            'resnext': models.resnext50_32x4d,
+            'mnasnet': models.mnasnet1_0
+        }
 
         self.num_classes = num_classes
         self.arch = arch
-        self.model = self.build_network() 
+        self.model = self.build_network()
         self.optimizer = optimizer
         self.loss_fn = loss_fn
-    
+        if temperature is None:
+            self.temperature = 1
+        else:
+            self.temperature = temperature
+
     def build_network(self):
         assert self.arch in ARCH_NAMES
         network = self.arch_dict[self.arch](num_classes=self.num_classes)
@@ -31,10 +44,10 @@ class NetworkBuilder:
         self.model = self.model.to(device)
         optimizer = self.optimizer(self.model.parameters(), lr=lr)
         train(epochs=train_epochs, device=device, dataloader=dataloader,
-                net=self.model, optimizer=optimizer, criterion=self.loss_fn)
+              net=self.model, optimizer=optimizer, criterion=self.loss_fn, temperature=self.temperature)
 
     def test_network(self, device, dataloader, model_path=None, save_softmax_outputs=False, softmax_save_path=None):
-        test(device=device, dataloader=dataloader, net=self.model, model_path=model_path, 
+        test(device=device, dataloader=dataloader, net=self.model, model_path=model_path,
              save_softmax_outputs=save_softmax_outputs, softmax_save_path=softmax_save_path)
 
     def save_network_params(self, save_path):

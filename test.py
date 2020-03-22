@@ -1,10 +1,12 @@
 from tqdm import tqdm
 import torch.nn.functional as F
 import numpy as np
-    
+import torch
+
+
 def test(device, dataloader, net, model_path=None, save_softmax_outputs=False, softmax_save_path=None):
     total_datapoints = len(dataloader.dataset.data)
-    total_batches = total_datapoints//dataloader.batch_size
+    total_batches = total_datapoints // dataloader.batch_size
     net = net.to(device)
     arr_softmax_outputs = []
     if model_path is not None:
@@ -23,7 +25,7 @@ def test(device, dataloader, net, model_path=None, save_softmax_outputs=False, s
                 arr_softmax_outputs.append(softmax_outputs)
                 pbar.update(1)
 
-        print('Test accuracy on {} data points: {}%'.format(total_datapoints, 100 * correct/total))
+        print('Test accuracy on {} data points: {}%'.format(total_datapoints, 100 * correct / total))
     if save_softmax_outputs:
         assert softmax_save_path is not None
         torch.save(torch.cat(arr_softmax_outputs), f=softmax_save_path)
